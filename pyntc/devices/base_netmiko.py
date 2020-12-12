@@ -35,6 +35,11 @@ class BaseNetmiko(BaseDevice):
     # TODO(drx): ask Jacob if we should have this. 
     # Aireos does not have this method but also does not use Netmiko FileTransfer
     @abc.abstractmethod
-    def def _file_copy_instance(self, src, dest=None, file_system="flash:")::
-        """Enter into config mode using Netmiko FileTransfer."""
+    def _file_copy_instance(self, src, dest=None, file_system="flash:")::
+        """Perform file tranfer and return file copy instance using Netmiko FileTransfer."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def enable(self)::
+        """Ensure device is in enable mode."""
         raise NotImplementedError
