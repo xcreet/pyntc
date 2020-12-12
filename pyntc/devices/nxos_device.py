@@ -4,7 +4,11 @@ import os
 import re
 import time
 
+from netmiko import ConnectHandler
+from netmiko import FileTransfer
+
 from .base_device import BaseDevice, RollbackError, RebootTimerError, fix_docs
+from .base_netmiko import BaseNetmiko
 from pyntc.errors import (
     CommandError,
     OSInstallError,
@@ -14,22 +18,27 @@ from pyntc.errors import (
     NTCFileNotFoundError,
 )
 
-from pynxos.device import Device as NXOSNative
-from pynxos.features.file_copy import FileTransferError as NXOSFileTransferError
-from pynxos.errors import CLIError
+# from pynxos.device import Device as NXOSNative
+# from pynxos.features.file_copy import FileTransferError as NXOSFileTransferError
+# from pynxos.errors import CLIError
 
 
 @fix_docs
-class NXOSDevice(BaseDevice):
+class NXOSDevice(BaseNetmiko):
     """Cisco NXOS Device Implementation."""
 
     vendor = "cisco"
 
-    def __init__(self, host, username, password, transport="http", timeout=30, port=None, **kwargs):
-        super().__init__(host, username, password, device_type="cisco_nxos_nxapi")
+    def __init__(self, host, username, password, secret="", port=22, confirm_active=True, transport="http", timeout=30, **kwargs):
+        super().__init__(host, username, password, secret="", port=22, device_type="cisco_nxos_nxapi")
         self.transport = transport
         self.timeout = timeout
-        self.native = NXOSNative(host, username, password, transport=transport, timeout=timeout, port=port)
+        self.native = None
+        self.port = port
+        self.secret = secret
+        self.global_delay_factor = kwargs.get("global_delay_factor", 1)
+        self._connected = False
+        self.open(confirm_active=confirm_active)
 
     def _image_booted(self, image_name, **vendor_specifics):
         version_data = self.show("show version", raw_text=True)
@@ -57,11 +66,23 @@ class NXOSDevice(BaseDevice):
     def boot_options(self):
         return self.native.get_boot_options()
 
+    @property
+    def connected(self):
+        """
+        The connection status of the device.
+
+        Returns:
+            bool: True if the device is connected, else False.
+        """
+        return self._connected
+
     def checkpoint(self, filename):
         return self.native.checkpoint(filename)
 
     def close(self):
-        pass
+        if self.connected:
+            self.native.disconnect()
+            self._connected = False
 
     def config(self, command):
         try:
@@ -163,8 +184,54 @@ class NXOSDevice(BaseDevice):
 
         return False
 
-    def open(self):
-        pass
+    def open(self, confirm_active=True):
+        """
+        Open a connection to the network device.
+
+        This method will close the connection if ``confirm_active`` is True and the device is not active.
+        Devices that do not have high availibility are considred active.
+
+        Args:
+            confirm_active (bool): Determines if device's high availability state should be validated before leaving connection open.
+
+        Raises:
+            DeviceNotActiveError: When ``confirm_active`` is True, and the device high availabilit state is not active.
+
+        Example:
+            >>> device = NXOSDevice(**connection_args)
+            >>> device.open()
+            raised DeviceNotActiveError:
+            host1 is not the active device.
+
+            device state: standby hot
+            peer state:   active
+
+            >>> device.open(confirm_active=False)
+            >>> device.connected
+            True
+            >>>
+        """
+        if self.connected:
+            try:
+                self.native.find_prompt()
+            except:  # noqa E722
+                self._connected = False
+
+        if not self.connected:
+            self.native = ConnectHandler(
+                device_type="cisco_nxos",
+                ip=self.host,
+                username=self.username,
+                password=self.password,
+                port=self.port,
+                global_delay_factor=self.global_delay_factor,
+                secret=self.secret,
+                verbose=False,
+            )
+            self._connected = True
+
+        if confirm_active:
+            self.confirm_is_active()
 
     def reboot(self, confirm=False, timer=0):
         if timer != 0:

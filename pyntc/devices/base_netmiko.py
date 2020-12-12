@@ -14,10 +14,12 @@ class BaseNetmiko(BaseDevice):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, host, username, password, device_type=None, **kwargs):
+    def __init__(self, host, username, password, secret="", port=22, confirm_active=True, device_type=None, **kwargs):
         super().__init__(host, username, password, device_type)
         self.native = None
-        self.connected = False
+        self.port = port
+        self.secret = secret
+        self.global_delay_factor = kwargs.get("global_delay_factor", 1)
 
     ####################
     # ABSTRACT METHODS #
@@ -43,3 +45,13 @@ class BaseNetmiko(BaseDevice):
     def enable(self)::
         """Ensure device is in enable mode."""
         raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def connected(self):
+        """Connected boolean property.
+
+        Raises:
+            NotImplementedError: returns not implemented if not included in facts.
+        """
+        raise NotImplementedError 
