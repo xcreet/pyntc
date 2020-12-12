@@ -32,15 +32,9 @@ class BaseNetmiko(BaseDevice):
         """Enter into config mode using Netmiko ConnectHandler."""
         raise NotImplementedError
 
-
-class RebootTimerError(NTCError):
-    def __init__(self, device_type):
-        super().__init__("Reboot timer not supported on %s." % device_type)
-
-
-class RollbackError(NTCError):
-    pass
-
-
-class SetBootImageError(NTCError):
-    pass
+    # TODO(drx): ask Jacob if we should have this. 
+    # Aireos does not have this method but also does not use Netmiko FileTransfer
+    @abc.abstractmethod
+    def def _file_copy_instance(self, src, dest=None, file_system="flash:")::
+        """Enter into config mode using Netmiko FileTransfer."""
+        raise NotImplementedError
