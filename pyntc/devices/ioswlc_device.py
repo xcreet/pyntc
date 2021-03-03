@@ -45,13 +45,4 @@ class IOSXEWLCDevice(IOSDevice):
             confirm_active (bool): Determines if device's high availability state should be validated before leaving connection open.
             fast_cli (bool): Fast CLI mode for Netmiko, it is recommended to use False when opening the client on code upgrades
         """
-        super().__init__(host, username, password, device_type="cisco_ios_ssh")
-
-        self.native = None
-        self.secret = secret
-        self.port = int(port)
-        self.global_delay_factor = kwargs.get("global_delay_factor", 1)
-        self.delay_factor = kwargs.get("delay_factor", 1)
-        self._fast_cli = fast_cli
-        self._connected = False
-        self.open(confirm_active=confirm_active)
+        super().__init__(host, username, password, device_type="cisco_ios_ssh", secret="", port=22, confirm_active=True, fast_cli=True, **kwargs)
