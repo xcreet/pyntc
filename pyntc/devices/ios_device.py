@@ -782,7 +782,6 @@ class IOSDevice(BaseDevice):
                 self._connected = False
 
         if not self.connected:
-            print('Using timeout: ' + self.conn_timeout)
             self.native = ConnectHandler(
                 device_type="cisco_ios",
                 ip=self.host,
