@@ -69,6 +69,7 @@ class IOSDevice(BaseDevice):
         self.delay_factor = kwargs.get("delay_factor", 1)
         self._fast_cli = fast_cli
         self._connected = False
+        self.conn_timeout = kwargs.get("conn_timeout", 5)
         self.open(confirm_active=confirm_active)
 
     def _check_command_output_for_errors(self, command, command_response):
@@ -791,6 +792,7 @@ class IOSDevice(BaseDevice):
                 secret=self.secret,
                 verbose=False,
                 fast_cli=self.fast_cli,
+                conn_timeout=self.conn_timeout
             )
             self._connected = True
 
