@@ -716,6 +716,7 @@ class IOSDevice(BaseDevice):
 
             else:
                 self.set_boot_options(image_name, **vendor_specifics)
+                self.save()
                 self.reboot()
 
             # Wait for the reboot to finish
