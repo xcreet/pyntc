@@ -716,10 +716,11 @@ class IOSDevice(BaseDevice):
 
             else:
                 self.set_boot_options(image_name, **vendor_specifics)
-                self.save()
+                print(self.hostname + ': Rebooting device')
                 self.reboot()
 
             # Wait for the reboot to finish
+            print(self.hostname + ': Waiting for device to come back online')
             self._wait_for_device_reboot(timeout=timeout)
 
             # Set FastCLI back to originally set when using install mode
@@ -727,6 +728,7 @@ class IOSDevice(BaseDevice):
                 self.fast_cli = current_fast_cli
 
             # Verify the OS level
+            print(self.hostname + ': Verifying Firware Upgrade')
             if not self._image_booted(image_name):
                 raise OSInstallError(hostname=self.hostname, desired_boot=image_name)
 
