@@ -728,7 +728,7 @@ class IOSDevice(BaseDevice):
                 self.fast_cli = current_fast_cli
 
             # Verify the OS level
-            print(self.hostname + ': Verifying Firware Upgrade')
+            print(self.hostname + ': Verifying Firmware Upgrade')
             if not self._image_booted(image_name):
                 raise OSInstallError(hostname=self.hostname, desired_boot=image_name)
 
