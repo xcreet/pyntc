@@ -53,6 +53,9 @@ class SikluDevice(BaseDevice):
         """
         super().__init__(host, username, password, device_type="siklu_ssh")
 
+        import pdb;
+        pdb.set_trace()
+        
         self.native = None
         self.secret = secret
         self.port = int(port)
