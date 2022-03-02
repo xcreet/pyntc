@@ -51,7 +51,7 @@ class SikluDevice(BaseDevice):
             confirm_active (bool): Determines if device's high availability state should be validated before leaving connection open.
             fast_cli (bool): Fast CLI mode for Netmiko, it is recommended to use False when opening the client on code upgrades
         """
-        super().__init__(host, username, password, device_type="cisco_ios_ssh")
+        super().__init__(host, username, password, device_type="siklu_ssh")
 
         self.native = None
         self.secret = secret
