@@ -6,7 +6,7 @@ import re
 import time
 import warnings
 
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, BaseConnection
 from netmiko import FileTransfer
 
 from pyntc.utils import get_structured_data
@@ -776,7 +776,7 @@ class SikluDevice(BaseDevice):
                 self._connected = False
 
         if not self.connected:
-            self.native = ConnectHandler(
+            self.native = BaseConnection(
                 device_type="linux",
                 ip=self.host,
                 username=self.username,
