@@ -789,6 +789,7 @@ class SikluDevice(BaseDevice):
                 conn_timeout=self.conn_timeout
             )
             self._connected = True
+        return
 
         if confirm_active:
             self.confirm_is_active()
