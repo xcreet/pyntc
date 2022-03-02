@@ -285,36 +285,7 @@ class SikluDevice(BaseDevice):
             self._connected = False
 
     def config(self, command, **netmiko_args):
-        r"""
-        Send config commands to device.
-
-        By default, entering and exiting config mode is handled automatically.
-        To disable entering and exiting config mode, pass `enter_config_mode` and `exit_config_mode` in ``**netmiko_args``.
-        This supports all arguments supported by Netmiko's `send_config_set` method using ``netmiko_args``.
-        This will send each command in ``command`` until either an Error is caught or all commands have been sent.
-
-        Args:
-            command (str|list): The command or commands to send to the device.
-            **netmiko_args: Any argument supported by ``netmiko.ConnectHandler.send_config_set``.
-
-        Returns:
-            str: When ``command`` is a str, the config session input and output from sending ``command``.
-            list: When ``command`` is a list, the config session input and output from sending ``command``.
-
-        Raises:
-            TypeError: When sending an argument in ``**netmiko_args`` that is not supported.
-            CommandError: When ``command`` is a str and its results report an error.
-            CommandListError: When ``command`` is a list and one of the commands reports an error.
-
-        Example:
-            >>> device = IOSDevice(**connection_args)
-            >>> device.config("no service pad")
-            'configure terminal\nEnter configuration commands, one per line.  End with CNTL/Z.\n'
-            'host(config)#no service pad\nhost(config)#end\nhost#'
-            >>> device.config(["interface Gig0/1", "description x-connect"])
-            ['host(config)#interface Gig0/1\nhost(config-if)#, 'description x-connect\nhost(config-if)#']
-            >>>
-        """
+   
         # TODO: Remove this when deprecating config_list method
         original_command_is_str = isinstance(command, str)
 
@@ -788,6 +759,7 @@ class SikluDevice(BaseDevice):
                 # fast_cli=self.fast_cli,
                 conn_timeout=self.conn_timeout
             )
+            self.native.set_base_prompt('>')
             self._connected = True
         return
 
@@ -996,7 +968,7 @@ class SikluDevice(BaseDevice):
         Returns:
             str: Output of command.
         """
-        self.enable()
+        # self.enable()
         return self._send_command(command, expect_string=expect_string)
 
     def show_list(self, commands):
