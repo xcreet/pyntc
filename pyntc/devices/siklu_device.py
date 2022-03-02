@@ -27,7 +27,7 @@ from pyntc.errors import (
 
 BASIC_FACTS_KM = {"model": "hardware", "os_version": "version", "serial_number": "serial", "hostname": "hostname"}
 SHOW_DIR_RETRY_COUNT = 5
-
+FIRMWARE_INSTALL_DELAY_INTERVAL = 60 * 15
 
 @fix_docs
 class SikluDevice(BaseDevice):
@@ -631,19 +631,16 @@ class SikluDevice(BaseDevice):
             return True
         return False
 
-    def install_os(self, image_name, install_mode=False, install_mode_delay_factor=20, **vendor_specifics):
-        """Installs the prescribed Network OS, which must be present before issuing this command.
+    def install_os(self, tftp_path):
+        command = 'copy sw ' + tftp_path
+        self.show(command)
 
-        Args:
-            image_name (str): Name of the IOS image to boot into
-            install_mode (bool, optional): Uses newer install method on devices. Defaults to False.
+        command = 'run sw immediate ' + str(FIRMWARE_INSTALL_DELAY_INTERVAL)
+        self.show(command)
 
-        Raises:
-            OSInstallError: Unable to install OS Error type
+        return
 
-        Returns:
-            bool: False if no install is needed, true if the install completes successfully
-        """
+        
         timeout = vendor_specifics.get("timeout", 3600)
         if not self._image_booted(image_name):
             if install_mode:

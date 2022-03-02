@@ -701,9 +701,11 @@ class IOSDevice(BaseDevice):
                     # Run install command and reboot device
                     command = f"request platform software package install switch all file {self._get_file_system()}{image_name} auto-copy"
                     self.show(command, delay_factor=install_mode_delay_factor)
+                    print(self.hostname + ': Rebooting device')
                     self.reboot()
 
                 else:
+                    print(self.hostname + ': Rebooting device')
                     # Run install command (which reboots the device)
                     command = (
                         f"install add file {self._get_file_system()}{image_name} activate commit prompt-level none"
