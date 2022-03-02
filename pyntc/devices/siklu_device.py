@@ -53,9 +53,6 @@ class SikluDevice(BaseDevice):
         """
         super().__init__(host, username, password, device_type="siklu_ssh")
 
-        import pdb;
-        pdb.set_trace()
-        
         self.native = None
         self.secret = secret
         self.port = int(port)
@@ -780,7 +777,7 @@ class SikluDevice(BaseDevice):
 
         if not self.connected:
             self.native = ConnectHandler(
-                device_type="cisco_ios",
+                device_type="linux",
                 ip=self.host,
                 username=self.username,
                 password=self.password,
@@ -788,7 +785,7 @@ class SikluDevice(BaseDevice):
                 global_delay_factor=self.global_delay_factor,
                 secret=self.secret,
                 verbose=False,
-                fast_cli=self.fast_cli,
+                # fast_cli=self.fast_cli,
                 conn_timeout=self.conn_timeout
             )
             self._connected = True
