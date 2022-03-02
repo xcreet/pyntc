@@ -784,7 +784,7 @@ class SikluDevice(BaseDevice):
                 port=self.port,
                 global_delay_factor=self.global_delay_factor,
                 secret=self.secret,
-                verbose=False,
+                verbose=True,
                 # fast_cli=self.fast_cli,
                 conn_timeout=self.conn_timeout
             )
