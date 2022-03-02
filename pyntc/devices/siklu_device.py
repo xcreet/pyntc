@@ -40,7 +40,7 @@ class SikluDevice(BaseDevice):
         self, host, username, password, secret="", port=22, confirm_active=True, fast_cli=True, **kwargs
     ):  # noqa: D403
         """
-        PyNTC Device implementation for Cisco IOS.
+        PyNTC Device implementation for Siklu.
 
         Args:
             host (str): The address of the network device.
