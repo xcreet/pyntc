@@ -267,6 +267,7 @@ class NXOSDevice(BaseDevice):
         timeout = vendor_specifics.get("timeout", 3600)
         if not self._image_booted(image_name):
             self.set_boot_options(image_name, **vendor_specifics)
+            print(self.hostname + ': Rebooting device')
             self._wait_for_device_reboot(timeout=timeout)
             if not self._image_booted(image_name):
                 raise OSInstallError(hostname=self.facts.get("hostname"), desired_boot=image_name)
