@@ -71,6 +71,7 @@ class IOSDevice(BaseDevice):
         self._connected = False
         self.conn_timeout = kwargs.get("conn_timeout", 5)
         self.open(confirm_active=confirm_active)
+        self.nxos = kwargs.get('nxos', False)
 
     def _check_command_output_for_errors(self, command, command_response):
         """
@@ -797,7 +798,8 @@ class IOSDevice(BaseDevice):
                 secret=self.secret,
                 verbose=False,
                 fast_cli=self.fast_cli,
-                conn_timeout=self.conn_timeout
+                conn_timeout=self.conn_timeout,
+                disabled_algorithms={'pubkeys': ['rsa-sha2-256', 'rsa-sha2-512']} if self.nxos else None
             )
             self._connected = True
 
