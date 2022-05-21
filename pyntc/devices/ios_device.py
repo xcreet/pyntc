@@ -60,6 +60,7 @@ class IOSDevice(BaseDevice):
             confirm_active (bool): Determines if device's high availability state should be validated before leaving connection open.
             fast_cli (bool): Fast CLI mode for Netmiko, it is recommended to use False when opening the client on code upgrades
         """
+        self.nxos = kwargs.get('nxos', False)
         super().__init__(host, username, password, device_type="cisco_ios_ssh")
 
         self.native = None
@@ -71,7 +72,6 @@ class IOSDevice(BaseDevice):
         self._connected = False
         self.conn_timeout = kwargs.get("conn_timeout", 5)
         self.open(confirm_active=confirm_active)
-        self.nxos = kwargs.get('nxos', False)
 
     def _check_command_output_for_errors(self, command, command_response):
         """
