@@ -1,29 +1,27 @@
 """Module for using a Cisco IOS device over SSH."""
 
-import signal
 import os
 import re
+import signal
 import time
 import warnings
 
-from netmiko import ConnectHandler
-from netmiko import FileTransfer
-
-from pyntc.utils import get_structured_data
-from .base_device import BaseDevice, RollbackError, fix_docs
+from netmiko import ConnectHandler, FileTransfer
 from pyntc.errors import (
-    NTCError,
     CommandError,
-    OSInstallError,
     CommandListError,
-    FileTransferError,
-    RebootTimeoutError,
     DeviceNotActiveError,
-    NTCFileNotFoundError,
     FileSystemNotFoundError,
+    FileTransferError,
+    NTCError,
+    NTCFileNotFoundError,
+    OSInstallError,
+    RebootTimeoutError,
     SocketClosedError,
 )
+from pyntc.utils import get_structured_data
 
+from .base_device import BaseDevice, fix_docs, RollbackError
 
 BASIC_FACTS_KM = {"model": "hardware", "os_version": "version", "serial_number": "serial", "hostname": "hostname"}
 RE_SHOW_REDUNDANCY = re.compile(
@@ -45,7 +43,7 @@ class IOSDevice(BaseDevice):
     vendor = "cisco"
     active_redundancy_states = {None, "active"}
 
-    def __init__(
+    def __init__(  # nosec
         self, host, username, password, secret="", port=22, confirm_active=True, fast_cli=True, **kwargs
     ):  # noqa: D403
         """
@@ -996,7 +994,7 @@ class IOSDevice(BaseDevice):
                 message="Setting boot command did not yield expected results, found {0}".format(new_boot_options),
             )
 
-    def show(self, command, expect_string=None):
+    def show(self, command, expect_string=None, **netmiko_args):
         """Run command on device.
 
         Args:
@@ -1007,7 +1005,7 @@ class IOSDevice(BaseDevice):
             str: Output of command.
         """
         self.enable()
-        return self._send_command(command, expect_string=expect_string)
+        return self._send_command(command, expect_string=expect_string, **netmiko_args)
 
     def show_list(self, commands):
         """Run a list of commands on device.
