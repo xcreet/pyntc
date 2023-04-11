@@ -213,7 +213,7 @@ class NXOSDevice(BaseDevice):
 
         return self._serial_number
 
-    def file_copy(self, src, dest=None, file_system="bootflash:"):
+    def file_copy(self, src, dest=None, file_system="bootflash:", progress_callback=None):
         """Send a local file to the device.
 
         Args:
@@ -227,7 +227,7 @@ class NXOSDevice(BaseDevice):
         if not self.file_copy_remote_exists(src, dest, file_system):
             dest = dest or os.path.basename(src)
             try:
-                file_copy = self.native.file_copy(src, dest, file_system=file_system)
+                file_copy = self.native.file_copy(src, dest, file_system=file_system, progress_callback=progress_callback)
                 if not self.file_copy_remote_exists(src, dest, file_system):
                     raise FileTransferError(
                         message="Attempted file copy, but could not validate file existed after transfer"
