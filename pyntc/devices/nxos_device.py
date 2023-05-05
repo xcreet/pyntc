@@ -48,18 +48,17 @@ class NXOSDevice(BaseDevice):
 
         return False
 
-    def _wait_for_device_reboot(self, timeout=600):
-        print('Waiting for device reboot', flush=True)
+    def _wait_for_device_reboot(self, timeout=3600):
         start = time.time()
         while time.time() - start < timeout:
             try:
-                print('Refreshing facts', flush=True)
-                self.refresh_facts()
-                if self.uptime < 180:
-                    return
-            except:  # noqa E722 # nosec
+                self.native.show("show hostname")
+                log.debug("Host %s: Device rebooted.", self.host)
+                return
+            except:  # noqa E722 # nosec  # pylint: disable=bare-except
                 pass
 
+        log.error("Host %s: Device timed out while rebooting.", self.host)
         raise RebootTimeoutError(hostname=self.hostname, wait_time=timeout)
 
     def backup_running_config(self, filename):
