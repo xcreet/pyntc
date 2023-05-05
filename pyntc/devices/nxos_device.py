@@ -49,9 +49,11 @@ class NXOSDevice(BaseDevice):
         return False
 
     def _wait_for_device_reboot(self, timeout=600):
+        print('Waiting for device reboot', flush=True)
         start = time.time()
         while time.time() - start < timeout:
             try:
+                print('Refreshing facts', flush=True)
                 self.refresh_facts()
                 if self.uptime < 180:
                     return
@@ -264,10 +266,13 @@ class NXOSDevice(BaseDevice):
         Returns:
             bool: True if new image is boot option on device. Otherwise, false.
         """
+        print('Getting vendor specifics', flush=True)
         timeout = vendor_specifics.get("timeout", 3600)
         if not self._image_booted(image_name):
+            print('Setting boot options', flush=True)
             self.set_boot_options(image_name, **vendor_specifics)
-            print(self.hostname + ': Rebooting device')
+            print(self.hostname + ': Rebooting device', flush=True)
+            print('timeout is: ' + str(timeout), flush=True)
             self._wait_for_device_reboot(timeout=timeout)
             if not self._image_booted(image_name):
                 raise OSInstallError(hostname=self.facts.get("hostname"), desired_boot=image_name)
