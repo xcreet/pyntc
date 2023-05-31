@@ -44,8 +44,10 @@ class NXOSDevice(BaseDevice):
     def _image_booted(self, image_name, **vendor_specifics):
         version_data = self.show("show version", raw_text=True)
         if re.search(image_name, version_data):
+            print("Host %s: Image %s booted successfully.", self.host, image_name)
             return True
 
+        print("Host %s: Image %s not booted successfully.", self.host, image_name)
         return False
 
     def _wait_for_device_reboot(self, timeout=3600):
@@ -265,6 +267,7 @@ class NXOSDevice(BaseDevice):
         Returns:
             bool: True if new image is boot option on device. Otherwise, false.
         """
+        self.native.show("terminal dont-ask")
         print('Getting vendor specifics', flush=True)
         timeout = vendor_specifics.get("timeout", 3600)
         if not self._image_booted(image_name):
